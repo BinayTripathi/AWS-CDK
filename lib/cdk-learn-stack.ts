@@ -8,6 +8,7 @@ export class CdkLearnStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    //console.log(props)
     const queue = new sqs.Queue(this, 'CdkLearnQueue', {
       visibilityTimeout: Duration.seconds(300)
     });
