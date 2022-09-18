@@ -4,6 +4,8 @@ import { aws_ec2 as _ec2 } from 'aws-cdk-lib';
 
 export class CustomVpcStack extends Stack {
 
+  customVpc: _ec2.Vpc;
+
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
  
@@ -30,7 +32,7 @@ export class CustomVpcStack extends Stack {
         cidrMask: vpcConf.cidr_mask
       };
 
-          var customVpc: _ec2.Vpc = new _ec2.Vpc(this, "CustomVpc", {
+          this.customVpc = new _ec2.Vpc(this, "CustomVpc", {
           cidr: vpcConf.cidr,
           maxAzs: 2,
           natGateways: 1,
@@ -39,10 +41,10 @@ export class CustomVpcStack extends Stack {
           ]
         } )
 
-        Tags.of(customVpc).add("Owner", "Binay")
+        Tags.of(this.customVpc).add("Owner", "Binay")
 
         var vcpCfnOutput = new CfnOutput(this, "customVpcIdO", 
-                    {value: customVpc.vpcId, exportName: "customVpcOutput"})
+                    {value: this.customVpc.vpcId, exportName: "customVpcOutput"})
     }
   }
 
