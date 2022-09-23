@@ -10,7 +10,7 @@ export interface VPCExportedStackProps extends StackProps { vpcCustom: _ec2.Vpc 
 export interface WebServerStackProps extends VPCExportedStackProps { publicKeyName: string, bastionHost: _ec2.Instance }
 
 export function syncReadFile(filename: string) {
-    const result = readFileSync(join(__dirname,'/bootstrap_scripts', filename), 'utf-8');
+    const result = readFileSync(join(__dirname,'/CustomEC2/bootstrap_scripts', filename), 'utf-8');
     return result;
   }
 

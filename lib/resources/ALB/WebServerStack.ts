@@ -7,12 +7,10 @@ import { aws_autoscaling as _autoscaling} from 'aws-cdk-lib';
 
 import { WebServerStackProps,syncReadFile, freeTierInstanceType, freeTierMmachineImage, privateSubnetWithNATConfiguration } from '../CustomInterfaces'
 
-
 export class WebServerStack extends Stack {
 
     constructor(scope: Construct, id: string,  props: WebServerStackProps) {
       super(scope, id, props);
-
      
         //Create Load balancer
         const alb = new _elb.ApplicationLoadBalancer(this, "myAlbId", {
@@ -31,8 +29,7 @@ export class WebServerStack extends Stack {
         })
      
         
-       //--- START Resources to creating Autoscaling group
-       
+       //--- START Resources to creating Autoscaling group       
           
       //Webserver IAM role (Service based)
       var weServerRole = new _iam.Role(this,"WebServerRoleId", {
@@ -42,7 +39,6 @@ export class WebServerStack extends Stack {
           _iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3ReadOnlyAccess')
         ]
       })
-
        
       //--- END Resources to creating Autoscaling group
 

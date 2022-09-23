@@ -9,7 +9,7 @@ import { VPCExportedStackProps, syncReadFile, freeTierInstanceType, freeTierMmac
 export class BastionHost extends Stack {
 
   bastionHostConnPublicKey: String
-  bastionHost : _ec2.Instance
+  bastionHost : _ec2.BastionHostLinux | _ec2.Instance
 
     constructor(scope: Construct, id: string, props: VPCExportedStackProps) {
       super(scope, id, props);
@@ -23,8 +23,17 @@ export class BastionHost extends Stack {
       })
 
       this.bastionHostConnPublicKey = cfnKeyPair.keyName;
+
+      //Bastion host as provided by cdk it has SSM 
+      /*this.bastionHost = new _ec2.BastionHostLinux(this, 'BastionHost', {
+        vpc: props.vpcCustom,
+        subnetSelection: publicSubnetConfiguration,
+        instanceType : freeTierInstanceType,
+        machineImage: freeTierMmachineImage,
+
+      });*/
       
-      this.bastionHost = new _ec2.Instance(this,"BastionHost", {
+        /*this.bastionHost = new _ec2.Instance(this,"BastionHost", {
         instanceType: freeTierInstanceType,
         machineImage: freeTierMmachineImage,
         vpc: props.vpcCustom,
@@ -32,14 +41,16 @@ export class BastionHost extends Stack {
         userData:_ec2.UserData.custom(syncReadFile("install_httpd.sh")),
         keyName: 'Binay_Sydney_BastionHost'
       })
+      
+       //Adding connection - through security group or a defaut allow type
+      this.bastionHost.connections.allowFromAnyIpv4(_ec2.Port.tcp(22), "Allowing all SSH traffic")*/
 
-    //Adding connection - through security group or a defaut allow type
-    bastionHost.connections.allowFromAnyIpv4(_ec2.Port.tcp(2), "Allowing all SSH traffic")
+   
 
     //Exporting Ip address as output
     var output1 = new CfnOutput(this, "BastionHostIp", {
         description: 'Bastion host public ip address',
-        value: bastionHost.instancePublicIp,
+        value: this.bastionHost.instancePublicIp,
     })
 
  }

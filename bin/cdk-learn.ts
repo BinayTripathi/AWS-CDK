@@ -4,7 +4,7 @@ import * as _core from 'aws-cdk-lib/core';
 import { CdkLearnStack } from '../lib/cdk-learn-stack';
 import {CustomVpcStack} from '../lib/resources/VPC/custom-vpc-stack';
 import { CustomEC2Stack } from '../lib/resources/CustomEC2/custom-ec2-stack';
-import { WebServerStack, VPCExportedStackProps } from '../lib/resources/ALB/WebServerStack';
+import { WebServerStack } from '../lib/resources/ALB/WebServerStack';
 import { BastionHost } from '../lib/resources/CustomEC2/BastionHost';
 const app = new cdk.App();
 
