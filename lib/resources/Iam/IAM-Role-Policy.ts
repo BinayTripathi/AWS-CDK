@@ -16,14 +16,26 @@ export class IamRoleWithPolicies extends Stack {
         const paramStoreReadOnlyPolicyStmt = new _iam.PolicyStatement({
             effect: _iam.Effect.ALLOW,
             resources: [
-              `arn:aws:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/app/myApplication_dev/NoOfConcurrentUsers`
+              `arn:aws:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/app/myApplication_dev/NoOfConcurrentUsers`,
               //`arn:aws:ssm:${props.env?.region}:${props.env?.account}:parameter/app/myApplication_dev/NoOfConcurrentUsers`
+              `arn:aws:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/ec2/keypair/key-*`
             ],
             actions: [
               "ssm:DescribeParameters", "ssm:GetParameters", "ssm:GetParameter", "ssm:GetParameterHistory"
             ]
           })
           paramStoreReadOnlyPolicyStmt.sid = "ReadOnlyAccessToSSMParamNoOfConcurrentUser"
+
+          const kmsReadOnlyPolicyStmt = new _iam.PolicyStatement({
+            effect: _iam.Effect.ALLOW,
+            resources: [
+              "arn:aws:kms:ap-southeast-2:500418659403:key/49cf846f-3008-4e57-976c-0ac555128e1a"
+            ],
+            actions: [
+              "kms:Decrypt", "kms:DescribeKey"
+            ]
+          })
+          kmsReadOnlyPolicyStmt.sid = "ReadOnlyAccessToKMS"
 
         // CustomerManaged policy type. If we just give _iam.Policy it creates inline policy
         const paramStoreReadOnlyPolicy = new _iam.ManagedPolicy(this, "ParamStoreReadOnlyAccess", {
@@ -40,9 +52,9 @@ export class IamRoleWithPolicies extends Stack {
         })
 
         //Attach policies to role
-        this.bastionHostRole.addManagedPolicy(s3ReadOnlyPolicy)
-        this.bastionHostRole.addManagedPolicy(paramStoreReadOnlyPolicy)
+        this.bastionHostRole.addManagedPolicy(s3ReadOnlyPolicy)   // AWS Managed
+        this.bastionHostRole.addManagedPolicy(paramStoreReadOnlyPolicy) // Customer Managed
+        this.bastionHostRole.addToPolicy(kmsReadOnlyPolicyStmt)  //Inline
     }
 
 }
-

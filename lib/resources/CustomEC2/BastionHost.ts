@@ -40,7 +40,8 @@ export class BastionHost extends Stack {
         vpcSubnets: publicSubnetConfiguration,
         userData:_ec2.UserData.custom(syncReadFile("install_httpd.sh")),
         keyName: 'Sydney_BastionHost',
-        role: props.bastionHostRole
+        role: props.bastionHostRole //  This lets bastion host read the ssm paramater `arn:aws:ssm:${Aws.REGION}:${Aws.ACCOUNT_ID}:parameter/ec2/keypair/key-${cfnKeyPair.attrKeyPairId}`
+                                    // That has the private key to connect to Autoscaling group ec2 instances as they have the public key
       })
       
       
