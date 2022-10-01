@@ -1,12 +1,12 @@
 import { CfnOutput, Stack, StackProps, Tags } from 'aws-cdk-lib';
-import { aws_ec2 as _ec2 } from 'aws-cdk-lib';
+import { aws_ec2 as _ec2, aws_iam as _iam } from 'aws-cdk-lib';
 
 
 import { readFileSync, promises as fsPromises } from 'fs';
 import { join } from 'path';
 
 
-export interface VPCExportedStackProps extends StackProps { vpcCustom: _ec2.Vpc }
+export interface VPCExportedStackProps extends StackProps { vpcCustom: _ec2.Vpc, bastionHostRole:  _iam.Role}
 export interface WebServerStackProps extends VPCExportedStackProps { publicKeyName: string, bastionHost: _ec2.Instance }
 
 export function syncReadFile(filename: string) {

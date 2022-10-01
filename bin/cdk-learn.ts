@@ -7,6 +7,7 @@ import { CustomEC2Stack } from '../lib/resources/CustomEC2/custom-ec2-stack';
 import { WebServerStack } from '../lib/resources/ALB/WebServerStack';
 import { BastionHost } from '../lib/resources/CustomEC2/BastionHost';
 import { CustomParametersSecretsStack } from '../lib/resources/ParameterStore/custom-parameters-secrets-stack'
+import {IamRoleWithPolicies} from '../lib/resources/Iam/IAM-Role-Policy';
 
 const app = new cdk.App();
 
@@ -24,14 +25,28 @@ var allEnvs = app.node.tryGetContext('envs')
 
 //************************************************************************************* */
 
-/*  ------------VPC + Bastion host + Autoscaling group -----------------------
+
+//Parameter store and Secret Manager
+var ssmParamAndSecretStack = new CustomParametersSecretsStack(app,"CustomSSMParamAndSecret",  {env : allEnvs.prod})
+
+
+//************************************************************************************* */
+
+//IAM Role with Policy to access above ssm parameter
+var iamRole = new IamRoleWithPolicies(app,"MyBastionHostRole",  {env : allEnvs.prod})
+
+//************************************************************************************* */
+
+
+// ------------VPC + Bastion host + Autoscaling group -----------------------
 //Custom VPC
 var customVPC = new CustomVpcStack(app, "MyVPC",  allEnvs.prod)
 
 //CustomBastonHost
 var bastionHost = new BastionHost(app, "MyCommonBastionHost", { 
     ...allEnvs.prod,
-    vpcCustom: customVPC.customVpc} )
+    vpcCustom: customVPC.customVpc,
+    bastionHostRole: iamRole.bastionHostRole} )
 
 //Custom webServer
 var customWebServerStack = new WebServerStack(app, "CustomWebServerId", {
@@ -39,15 +54,5 @@ var customWebServerStack = new WebServerStack(app, "CustomWebServerId", {
     vpcCustom: customVPC.customVpc,
     bastionHost: bastionHost.bastionHost,
     publicKeyName: bastionHost.bastionHostConnPublicKey
-})*/
-
-//************************************************************************************* */
-
-
-//Parameter store and Secret Manager
-//var ssmParamAndSecretStack = new CustomParametersSecretsStack(app,"CustomSSMParamAndSecret",  {env : allEnvs.prod})
-
-
-//************************************************************************************* */
-
+})
 

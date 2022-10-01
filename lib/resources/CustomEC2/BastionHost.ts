@@ -9,7 +9,7 @@ import { VPCExportedStackProps, syncReadFile, freeTierInstanceType, freeTierMmac
 export class BastionHost extends Stack {
 
   bastionHostConnPublicKey: String
-  bastionHost : _ec2.BastionHostLinux | _ec2.Instance
+  bastionHost :  _ec2.BastionHostLinux  | _ec2.Instance
 
     constructor(scope: Construct, id: string, props: VPCExportedStackProps) {
       super(scope, id, props);
@@ -33,17 +33,19 @@ export class BastionHost extends Stack {
 
       });*/
       
-        /*this.bastionHost = new _ec2.Instance(this,"BastionHost", {
+        this.bastionHost = new _ec2.Instance(this,"BastionHost", {
         instanceType: freeTierInstanceType,
         machineImage: freeTierMmachineImage,
         vpc: props.vpcCustom,
         vpcSubnets: publicSubnetConfiguration,
         userData:_ec2.UserData.custom(syncReadFile("install_httpd.sh")),
-        keyName: 'Binay_Sydney_BastionHost'
+        keyName: 'Sydney_BastionHost',
+        role: props.bastionHostRole
       })
       
+      
        //Adding connection - through security group or a defaut allow type
-      this.bastionHost.connections.allowFromAnyIpv4(_ec2.Port.tcp(22), "Allowing all SSH traffic")*/
+      this.bastionHost.connections.allowFromAnyIpv4(_ec2.Port.tcp(22), "Allowing all SSH traffic")
 
    
 
