@@ -8,6 +8,7 @@ import { WebServerStack } from '../lib/resources/ALB/WebServerStack';
 import { BastionHost } from '../lib/resources/CustomEC2/BastionHost';
 import { CustomParametersSecretsStack } from '../lib/resources/ParameterStore/custom-parameters-secrets-stack'
 import {IamRoleWithPolicies} from '../lib/resources/Iam/IAM-Role-Policy';
+import {ResourcePolicy } from '../lib/resources/Iam/ResourcePolicy'
 
 const app = new cdk.App();
 
@@ -27,32 +28,37 @@ var allEnvs = app.node.tryGetContext('envs')
 
 
 //Parameter store and Secret Manager
-var ssmParamAndSecretStack = new CustomParametersSecretsStack(app,"CustomSSMParamAndSecret",  {env : allEnvs.prod})
+//var ssmParamAndSecretStack = new CustomParametersSecretsStack(app,"CustomSSMParamAndSecret",  {env : allEnvs.prod})
 
 
 //************************************************************************************* */
 
 //IAM Role with Policy to access above ssm parameter
-var iamRole = new IamRoleWithPolicies(app,"MyBastionHostRole",  {env : allEnvs.prod})
+//var iamRole = new IamRoleWithPolicies(app,"MyBastionHostRole",  {env : allEnvs.prod})
 
 //************************************************************************************* */
 
 
 // ------------VPC + Bastion host + Autoscaling group -----------------------
 //Custom VPC
-var customVPC = new CustomVpcStack(app, "MyVPC",  allEnvs.prod)
+//var customVPC = new CustomVpcStack(app, "MyVPC",  allEnvs.prod)
 
 //CustomBastonHost
-var bastionHost = new BastionHost(app, "MyCommonBastionHost", { 
+/*var bastionHost = new BastionHost(app, "MyCommonBastionHost", { 
     ...allEnvs.prod,
     vpcCustom: customVPC.customVpc,
-    bastionHostRole: iamRole.bastionHostRole} )
+    bastionHostRole: iamRole.bastionHostRole} )*/
 
 //Custom webServer
-var customWebServerStack = new WebServerStack(app, "CustomWebServerId", {
+/*var customWebServerStack = new WebServerStack(app, "CustomWebServerId", {
     ...allEnvs.prod,
     vpcCustom: customVPC.customVpc,
     bastionHost: bastionHost.bastionHost,
     publicKeyName: bastionHost.bastionHostConnPublicKey
-})
+})*/
 
+
+//************************************************************************************* */
+
+//-----------------Testing Resource Policy --------------------
+var resPolicy = new ResourcePolicy(app, "TestResourcePolicy",  allEnvs.prod)
